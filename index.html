@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des tâches</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f7;
+      color: #333;
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      position: relative;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-top: 0;
+      margin-bottom: 30px;
+      font-weight: 600;
+      font-size: 2rem;
+    }
+    
+    .input-container {
+      display: flex;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    input {
+      flex: 1;
+      padding: 15px;
+      background: #f0f0f5;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      color: #333;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+    }
+    
+    input:focus {
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
+    }
+    
+    input::placeholder {
+      color: #999;
+    }
+    
+    button {
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      cursor: pointer;
+      border-radius: 8px;
+      margin-left: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+    }
+    
+    button:hover {
+      background: #4338ca;
+      transform: translateY(-2px);
+    }
+    
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    
+    li {
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      border-left: 3px solid #4f46e5;
+    }
+    
+    li:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .check-btn {
+      color: #4f46e5;
+      margin-right: 15px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 20px;
+      transition: all 0.2s ease;
+    }
+    
+    .check-btn:hover {
+      transform: scale(1.2);
+      color: #10b981;
+    }
+    
+    .delete-btn {
+      color: #6b7280;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 20px;
+      transition: all 0.2s ease;
+    }
+    
+    .delete-btn:hover {
+      transform: scale(1.2);
+      color: #ef4444;
+    }
+    
+    .task-buttons {
+      display: flex;
+    }
+    
+    .task-text {
+      flex: 1;
+      font-size: 16px;
+      color: #333;
+      margin-right: 15px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .done .task-text {
+      text-decoration: line-through;
+      color: #9ca3af;
+    }
+    
+    .done {
+      opacity: 0.7;
+      border-left: 3px solid #9ca3af;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+    }
+    
+    .modal-content {
+      background: #fff;
+      margin: 15% auto;
+      padding: 30px;
+      width: 350px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .modal-content p {
+      color: #333;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    
+    .modal-buttons {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .modal-buttons button {
+      margin: 0 10px;
+      min-width: 100px;
+    }
+    
+    #cancelBtn {
+      background: #e5e7eb;
+      color: #333;
+    }
+    
+    #cancelBtn:hover {
+      background: #d1d5db;
+    }
+    
+    #confirmBtn {
+      background: #ef4444;
+    }
+    
+    #confirmBtn:hover {
+      background: #dc2626;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .new-item {
+      animation: fadeIn 0.3s ease forwards;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Gestion des tâches</h1>
+    <div class="input-container">
+      <input type="text" id="taskInput" placeholder="Nouvelle tâche...">
+      <button id="addButton">Ajouter</button>
+    </div>
+    <ul id="taskList"></ul>
+  </div>
+  
+  <!-- Modal de confirmation -->
+  <div id="confirmModal" class="modal">
+    <div class="modal-content">
+      <p>Confirmation</p>
+      <p>Voulez-vous supprimer cette tâche?</p>
+      <div class="modal-buttons">
+        <button id="confirmBtn">Supprimer</button>
+        <button id="cancelBtn">Annuler</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Éléments du DOM
+    const addButton = document.getElementById('addButton');
+    const taskInput = document.getElementById('taskInput');
+    const taskList = document.getElementById('taskList');
+    const confirmModal = document.getElementById('confirmModal');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    
+    let taskToDelete = null;
+    
+    // Ajouter une tâche
+    addButton.addEventListener('click', () => {
+      const taskText = taskInput.value.trim();
+      if (taskText) {
+        addTaskToList(taskText);
+        taskInput.value = "";
+      }
+    });
+    
+    // Ajouter avec la touche Entrée
+    taskInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        addButton.click();
+      }
+    });
+    
+    // Fonction pour ajouter une tâche à la liste
+    function addTaskToList(text) {
+      const taskItem = document.createElement('li');
+      taskItem.className = 'new-item';
+      
+      const taskContainer = document.createElement('div');
+      taskContainer.className = 'task-text';
+      taskContainer.textContent = text;
+      
+      const buttonsContainer = document.createElement('div');
+      buttonsContainer.className = 'task-buttons';
+      
+      const checkButton = document.createElement('span');
+      checkButton.innerHTML = '✓';
+      checkButton.className = 'check-btn';
+      
+      const deleteButton = document.createElement('span');
+      deleteButton.innerHTML = '×';
+      deleteButton.className = 'delete-btn';
+      
+      buttonsContainer.appendChild(checkButton);
+      buttonsContainer.appendChild(deleteButton);
+      
+      taskItem.appendChild(taskContainer);
+      taskItem.appendChild(buttonsContainer);
+      
+      taskList.appendChild(taskItem);
+      
+      // Marquer comme terminé
+      checkButton.addEventListener('click', () => {
+        taskItem.classList.toggle('done');
+      });
+      
+      // Supprimer une tâche
+      deleteButton.addEventListener('click', () => {
+        taskToDelete = taskItem;
+        confirmModal.style.display = 'block';
+      });
+    }
+    
+    // Modal de confirmation
+    confirmBtn.addEventListener('click', () => {
+      if (taskToDelete) {
+        taskToDelete.remove();
+        taskToDelete = null;
+      }
+      confirmModal.style.display = 'none';
+    });
+    
+    cancelBtn.addEventListener('click', () => {
+      taskToDelete = null;
+      confirmModal.style.display = 'none';
+    });
+    
+    // Fermer la modal en cliquant en dehors
+    window.addEventListener('click', (e) => {
+      if (e.target === confirmModal) {
+        confirmModal.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
